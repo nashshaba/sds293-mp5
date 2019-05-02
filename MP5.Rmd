@@ -362,6 +362,14 @@ LASSO_coefficients_plot +
       b) on the `test` data via a submission to Kaggle `data/submit_LASSO.csv` that we will test.
 1. Compare the two RMLSE's. If they are different, comment on why they might be different.
 
+
+The LASSO model shrunk 12 variables to zero. The follow table displays the variables that were retained:
+
+```{r}
+my_lasso_res = get_LASSO_coefficients(LASSO_fit_optimal)
+my_lasso_res = my_lasso_res[my_lasso_res$estimate>0,]
+my_lasso_res[order(my_lasso_res$estimate),] 
+```
 ```{r}
 # Compute both RMLSE's here:
 
@@ -386,13 +394,7 @@ sample_submission$SalePrice <- exp(test$y_hat_LASSO) - 1 # unlog
 write_csv(sample_submission, path = "data/submission_model_2.csv")
 
 ```
-The LASSO model shrunk 12 variables to zero. The follow table displays the variables that were retained:
 
-```{r}
-my_lasso_res = get_LASSO_coefficients(LASSO_fit_optimal)
-my_lasso_res = my_lasso_res[my_lasso_rse$estimate>0,]
-my_lasso_res[order(my_lasso_res$estimate),] 
-```
 
 Comparing both RMLSE's here:
 
@@ -416,14 +418,9 @@ The LASSO model selected for the most important features necessary to make predi
 ```{r}
 # Train your model here:
 
-# Model formula
-model_formula <- "log_SalePrice ~ MSSubClass + LotFrontage + LotArea + 
-OverallQual + OverallCond + YearBuilt + YearRemodAdd + MasVnrArea + BsmtFinSF1 + 
-BsmtFinSF2 + BsmtUnfSF + TotalBsmtSF + FirstFlrSF + SecondFlrSF + LowQualFinSF + 
-GrLivArea + BsmtFullBath + BsmtHalfBath + FullBath + HalfBath + BedroomAbvGr + 
-KitchenAbvGr + TotRmsAbvGrd + Fireplaces + GarageYrBlt + GarageCars + GarageArea + 
-WoodDeckSF + OpenPorchSF + EnclosedPorch + ThirdSsnPorch + ScreenPorch + PoolArea + 
-MiscVal + MoSold + YrSold" %>% 
+# Model formula using some categorical variables
+
+model_formula_2 <- "log10_SalePrice ~ log10_GrLivArea + OverallQual + LotArea + HouseStyle + Neighborhood + SaleCondition + Condition1 + OverallCond + YearBuilt + CentralAir + Fireplaces + WoodDeckSF" %>%
   as.formula()
 
 
