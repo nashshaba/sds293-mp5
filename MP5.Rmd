@@ -322,24 +322,16 @@ The LASSO model selected for the most important features necessary to make predi
 1. Output a `data/submit_LASSO_2.csv`
 1. Submit to Kaggle and replace the screenshot below with an screenshot of your score.
 1. Try to get the best Kaggle leaderboard score!
-<<<<<<< HEAD
 
-=======
->>>>>>> 9b66925dde88146b8669b05f66babdbb0ce6a85a
 ```{r}
 # Train your model here:
 
 # Add log transform GrLivArea
-<<<<<<< HEAD
-training$log10_GrLivArea = log10(training$GrLivArea) # just to run function
-# test$SalePrice = 1
-# test$log_SalePrice = 1
-=======
+
 training$log10_GrLivArea = log10(training$GrLivArea)
 test$log10_GrLivArea = log10(test$GrLivArea) # just to run function
 test$SalePrice = 1
 test$log_SalePrice = 1
->>>>>>> 9b66925dde88146b8669b05f66babdbb0ce6a85a
 
 # Convert to factor
 test$HouseStyle = as.factor(test$HouseStyle)
