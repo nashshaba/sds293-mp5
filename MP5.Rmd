@@ -430,8 +430,9 @@ test$log10_GrLivArea = log10(test$GrLivArea) # just to run function
 test$HouseStyle = as.factor(test$HouseStyle)
 test$CentralAir = as.factor(test$CentralAir)
 
-model_formula_2 <- "log_SalePrice ~ log10_GrLivArea + OverallQual + LotArea + OverallCond + YearBuilt + CentralAir + Fireplaces + WoodDeckSF" %>% as.formula()
-
+model_formula_2 <- "log_SalePrice ~ log10_GrLivArea + CentralAir + HouseStyle + MSSubClass + LotFrontage +
+LotArea + OverallQual + OverallCond + YearBuilt + BsmtFinSF1 + TotalBsmtSF + SecondFlrSF + FullBath +
+Fireplaces + GarageYrBlt + OpenPorchSF" %>% as.formula()
 
 # Find lambda star:
 # Based on the above model formula, create "model matrix" representation of
@@ -487,7 +488,7 @@ write_csv(sample_submission, path = "data/submit_LASSO_2.csv")
 
 ```
 
-![](score_screenshot.png){ width=100% }
+![](mp5_cannonball.png){ width=100% }
 
 
 
