@@ -401,6 +401,13 @@ sample_submission$SalePrice <- exp(test$y_hat_LASSO) - 1 # unlog
 write_csv(sample_submission, path = "data/submission_model_2.csv")
 
 ```
+The LASSO model shrunk 12 variables to zero. The follow table displays the variables that were retained:
+
+```{r}
+my_lasso_res = get_LASSO_coefficients(LASSO_fit_optimal)
+my_lasso_res = my_lasso_res[my_lasso_rse$estimate>0,]
+my_lasso_res[order(my_lasso_res$estimate),] 
+```
 
 Comparing both RMLSE's here:
 
