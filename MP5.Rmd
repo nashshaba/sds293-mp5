@@ -363,11 +363,11 @@ LASSO_coefficients_plot +
 1. Compare the two RMLSE's. If they are different, comment on why they might be different.
 
 
-The LASSO model shrunk 12 variables to zero. The follow table displays the variables that were retained:
+The LASSO model shrunk 12 variables to zero. The follow table displays the variables that were not retained:
 
 ```{r}
 my_lasso_res = get_LASSO_coefficients(LASSO_fit_optimal)
-my_lasso_res = my_lasso_res[my_lasso_res$estimate>0,]
+my_lasso_res = my_lasso_res[my_lasso_res$estimate==0,]
 my_lasso_res[order(my_lasso_res$estimate),] 
 ```
 ```{r}
