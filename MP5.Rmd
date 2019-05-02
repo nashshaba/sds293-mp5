@@ -403,7 +403,9 @@ Method           | RMLSE on training  | RMLSE on test (via Kaggle)
 Unregularized lm | 0.00362            | 0.219
 LASSO            | 0.00456            | 0.193
 
-The LASSO model selected for the most important features necessary to make predictions, while the unregularized lm just used all of the predictors that we supplied. Unregularized lm likely performed better on the training set because we used all of the predictors; this results in a tight model fit on the training dataset. Because this unregularized lm model is so specific to the training data, it is not necessarily robust for outside datasets. The LASSO model dropped out some of the predictors, which resulted in a less tight fit to the training data. Importantly, the LASSO model selected the most important predictors, which allowed for a more robust model that performed better on the training. In short, LASSO is less specific to the training data, but is more robust for use in outside datasets.
+Bottome line: LASSO is less specific to the training data, but is more robust for use in outside datasets. LASSO helps prevent overfitting.
+
+Details: The LASSO model selected for the most important features necessary to make predictions, while the unregularized lm just used all of the predictors that we supplied. Unregularized lm likely performed better on the training set because we used all of the predictors; this results in a tight model fit on the training dataset. Because this unregularized lm model is so specific to the training data, it is not necessarily robust for outside datasets. The LASSO model dropped out some of the predictors, which resulted in a less tight fit to the training data. Importantly, the LASSO model selected the most important predictors, which allowed for a more robust model that performed better on the training. 
 
 ***
 
