@@ -93,7 +93,7 @@ glimpse(training)
 View(test)
 glimpse(test)
 
-# Pay close attention to the variables and variable types in sample_submission. 
+# Pay close attention to the variables and variable types in sample_submission.
 # Your submission must match this exactly.
 glimpse(sample_submission)
 
@@ -101,7 +101,88 @@ glimpse(sample_submission)
 skim(training)
 skim(test)
 ```
+## Clean-up the data
 
+```{r}
+# From MP2
+
+# Combine all data for homogenous cleaning
+test$SalePrice <- NA # do this so that num of cols match
+test$log_SalePrice <- NA # do this so that num of cols match
+combined <- rbind(training, test)
+
+# Fix stupid stuff
+combined$GarageYrBlt[combined$GarageYrBlt==2207] <- 2007
+
+# Look for fields with lots of NAs
+na_col <- which(colSums(is.na(combined)) > 0)
+sort(colSums(sapply(combined[na_col], is.na)), decreasing = TRUE)
+
+# For the categorical fields where NA = meaningful, change NA to NO
+combined$Alley = factor(combined$Alley, levels=c(levels(combined$Alley), "NO"))
+combined$Alley[is.na(combined$Alley)] = "NO"
+combined$BsmtCond = factor(combined$BsmtCond, levels=c(levels(combined$BsmtCond), "NO"))
+combined$BsmtCond[is.na(combined$BsmtCond)] = "NO"
+combined$BsmtExposure[is.na(combined$BsmtExposure)] = "NO"
+combined$BsmtFinType1 = factor(combined$BsmtFinType1, levels=c(levels(combined$BsmtFinType1), "NO"))
+combined$BsmtFinType1[is.na(combined$BsmtFinType1)] = "NO"
+combined$BsmtFinType2 = factor(combined$BsmtFinType2, levels=c(levels(combined$BsmtFinType2), "NO"))
+combined$BsmtFinType2[is.na(combined$BsmtFinType2)] = "NO"
+combined$BsmtQual = factor(combined$BsmtQual, levels=c(levels(combined$BsmtQual), "NO"))
+combined$BsmtQual[is.na(combined$BsmtQual)] = "NO"
+combined$Electrical = factor(combined$Electrical, levels=c(levels(combined$Electrical), "NO"))
+combined$Electrical[is.na(combined$Electrical)] = "NO" # ASSUMED
+combined$FireplaceQu = factor(combined$FireplaceQu, levels=c(levels(combined$FireplaceQu), "NO"))
+combined$FireplaceQu[is.na(combined$FireplaceQu)] = "NO"
+combined$Fence = factor(combined$Fence, levels=c(levels(combined$Fence), "NO"))
+combined$Fence[is.na(combined$Fence)] = "NO"
+combined$GarageCond = factor(combined$GarageCond, levels=c(levels(combined$GarageCond), "NO"))
+combined$GarageCond[is.na(combined$GarageCond)] = "NO"
+combined$GarageFinish = factor(combined$GarageFinish, levels=c(levels(combined$GarageFinish), "NO"))
+combined$GarageFinish[is.na(combined$GarageFinish)] = "NO"
+combined$GarageQual = factor(combined$GarageQual, levels=c(levels(combined$GarageQual), "NO"))
+combined$GarageQual[is.na(combined$GarageQual)] = "NO"
+combined$GarageType = factor(combined$GarageType, levels=c(levels(combined$GarageType), "NO"))
+combined$GarageType[is.na(combined$GarageType)] = "NO"
+combined$MasVnrType = factor(combined$MasVnrType, levels=c(levels(combined$MasVnrType), "NO"))
+combined$MasVnrType[is.na(combined$MasVnrType)] = "NO"
+combined$MiscFeature = factor(combined$MiscFeature, levels=c(levels(combined$MiscFeature), "NO"))
+combined$MiscFeature[is.na(combined$MiscFeature)] = "NO"
+combined$PoolQC = factor(combined$PoolQC, levels=c(levels(combined$PoolQC), "NO"))
+combined$PoolQC[is.na(combined$PoolQC)] = "NO"
+combined$Utilities = factor(combined$Utilities, levels=c(levels(combined$Utilities), "NO"))
+combined$Utilities[is.na(combined$Utilities)] = "NO" # ASSUMED
+
+# For the categorical fields where NA = missing data, assume most common category
+combined$Exterior1st[is.na(combined$Exterior1st)] <- names(sort(-table(combined$Exterior1st)))[1]
+combined$Exterior2nd[is.na(combined$Exterior2nd)] <- names(sort(-table(combined$Exterior2nd)))[1]
+combined$Functional[is.na(combined$Functional)] <- names(sort(-table(combined$Functional)))[1]
+combined$KitchenQual[is.na(combined$KitchenQual)] <- names(sort(-table(combined$KitchenQual)))[1]
+combined$MSZoning[is.na(combined$MSZoning)] <- names(sort(-table(combined$MSZoning)))[1]
+combined$SaleType[is.na(combined$SaleType)] <- names(sort(-table(combined$SaleType)))[1]
+
+
+# For the numerical fields where NA = meaningful, make NA 0
+combined$BsmtFinSF1[is.na(combined$BsmtFinSF1)] <- 0
+combined$BsmtFinSF2[is.na(combined$BsmtFinSF2)] <- 0
+combined$BsmtFullBath[is.na(combined$BsmtFullBath)] <- 0
+combined$BsmtHalfBath[is.na(combined$BsmtHalfBath)] <- 0
+combined$BsmtUnfSF[is.na(combined$BsmtUnfSF)] <- 0
+combined$GarageArea[is.na(combined$GarageArea)] <- 0
+combined$GarageCars[is.na(combined$GarageCars)] <- 0
+combined$GarageYrBlt[is.na(combined$GarageYrBlt)] <- 0
+combined$LotFrontage[is.na(combined$LotFrontage)] <- 0
+combined$MasVnrArea[is.na(combined$MasVnrArea)] <- 0
+combined$TotalBsmtSF[is.na(combined$TotalBsmtSF)] <- 0
+
+# Did we get rid of NAs?
+na_col <- which(colSums(is.na(combined)) > 0)
+sort(colSums(sapply(combined[na_col], is.na)), decreasing = TRUE)
+
+# Separate the training and test sets again
+training <- combined[1:50,]
+test <- combined[51:1509,]
+```
 
 
 ***
@@ -128,8 +209,21 @@ WoodDeckSF + OpenPorchSF + EnclosedPorch + ThirdSsnPorch + ScreenPorch + PoolAre
 MiscVal + MoSold + YrSold" %>% 
   as.formula()
 
-lm(model_formula, data = training) %>%
-  tidy(conf.int = TRUE)
+
+
+# Fit unregularized multiple regression model and output regression table. The
+# unregularized beta-hat coefficients are in the estimate column. Recall from
+# Lec18 notes that this is one "extreme". REMEMBER THESE VALUES!!!
+model_1 <- lm(model_formula, data = training) 
+
+# Extract point-by-point info of points used to fit model
+fitted_points_1 <- model_1 %>%
+  broom::augment()
+
+# Make predictions on test data. Compare this to use of broom::augment()
+# for fitted_points()
+predicted_points_1 <- model_1 %>%
+  broom::augment(newdata = test)
 ```
 
 
@@ -147,15 +241,18 @@ lm(model_formula, data = training) %>%
 
 ```{r}
 # Compute both RMLSE's here:
+rmsle(fitted_points_1$log_SalePrice, fitted_points_1$.fitted)
 
+# Make sample submission
+sample_submission$SalePrice <- exp(predicted_points_1$.fitted) - 1 # unlog
+write_csv(sample_submission, path = "data/submission_model_1.csv")
 ```
 
 RMLSE on training  | RMLSE on test (via Kaggle)
-------------- | -------------
-X             | Y
+------------------ | -------------
+0.003618116        | 0.21959
 
-
-
+The difference in RMSLE may be due the difference in training sample size (50 vs. 1460).
 
 ***
 
@@ -172,21 +269,98 @@ lowest estimated RMLSE as well as this lowest RMLSE as well. You may use functio
 ```{r}
 # Find lambda star:
 
+# 3. Based on the above model formula, create "model matrix" representation of
+# the predictor variables. 
+set.seed(76)
+
+x_matrix <- training %>%
+  modelr::model_matrix(model_formula, data = .) %>%
+  select(-`(Intercept)`) %>%
+  as.matrix()
+
+# 5. Crossvalidation:
+lambda_inputs <- 10^seq(from = -5, to = 3, length = 100)
+
+LASSO_CV <- cv.glmnet(
+  x = x_matrix,
+  y = training$log_SalePrice,
+  alpha = 1,
+  lambda = lambda_inputs,
+  nfolds = 10,
+  type.measure = "mse"
+)
+
+# What is te smallest estimated mse?
+LASSO_CV_df <- LASSO_CV %>%
+  broom::tidy() %>%
+  rename(mse = estimate) %>%
+  mutate(rmlse=sqrt(mse))%>%
+  arrange(rmlse)
+
+
+# The lambda_star is in the top row. We can extract this lambda_star value from
+# the LASSO_CV object:
+lambda_star <- LASSO_CV_df$lambda[1]
+lambda_star
+
+
+
+
+
+
+
+
+# What are the beta_hat values resulting from lambda_star? Which are shrunk to 0?
+# get_LASSO_coefficients(LASSO_fit_all_lambda) %>%
+#   filter(lambda == lambda_star)
+
 ```
 
 ```{r}
 # Create visualization here:
+CV_plot <- LASSO_CV %>%
+  broom::tidy() %>%
+  rename(mse = estimate) %>%
+  mutate(rmlse=sqrt(mse))%>%
+  arrange(rmlse)%>%
+  # plot:
+  ggplot(aes(x = lambda)) +
+  geom_point(aes(y = rmlse)) +
+  scale_x_log10() +
+  labs(x = "lambda (log10-scale)", y = "Estimated RMLSE")
 
+CV_plot +
+  coord_cartesian(xlim=c(10^(-5), 10^0), ylim = c(0.16, 0.135)) +
+  geom_vline(xintercept = lambda_star, linetype = "dashed", col = "blue")
 ```
 
 ```{r}
 # Output data frame of beta-hats for the LASSO model that uses lambda_star:
 
+# Fit a LASSO model with lambda_star
+LASSO_fit_optimal <- glmnet(x = x_matrix, y = training$log_SalePrice, alpha = 1, lambda = lambda_star)
+#Output dataframe
+get_LASSO_coefficients(LASSO_fit_optimal)
 ```
 
 ```{r}
 # Visualize the progression of beta-hats for different lambda values and mark lambda_star with a vertical line:
 
+# Fit a LASSO model with all values of lambda
+LASSO_fit_all_lambda <- glmnet(x = x_matrix, y = training$log_SalePrice, alpha = 1, lambda = lambda_inputs)
+
+#Visualization
+LASSO_coefficients_plot <- get_LASSO_coefficients(LASSO_fit_all_lambda) %>%
+  filter(term != "(Intercept)") %>%
+  # Plot:
+  ggplot(aes(x = lambda, y = estimate, col = term)) +
+  geom_line() +
+  labs(x = "lambda (log10-scale)", y = "beta-hat")+
+  scale_x_log10()
+
+# 6. Now mark lambda_star in beta-hat vs lambda plot:
+LASSO_coefficients_plot +
+  geom_vline(xintercept = lambda_star, linetype = "dashed", col = "blue")
 ```
 
 
@@ -206,14 +380,34 @@ lowest estimated RMLSE as well as this lowest RMLSE as well. You may use functio
 ```{r}
 # Compute both RMLSE's here:
 
+training <- training %>%
+  mutate(y_hat_LASSO = predict(LASSO_fit_optimal, newx = x_matrix, s = lambda_star)[,1])
+
+rmsle(training$log_SalePrice, training$y_hat_LASSO)
+
+x_matrix_test <- test %>%
+  # Create temporary outcome variance just to get model matrix to work:
+  mutate(log_SalePrice = 1) %>%
+  modelr::model_matrix(model_formula, data = .) %>%
+  select(-`(Intercept)`) %>%
+  as.matrix()
+
+test <- test %>%
+  mutate(y_hat_LASSO = predict(LASSO_fit_optimal, newx = x_matrix_test, s=lambda_star)[,1])
+
+
+# Make sample submission
+sample_submission$SalePrice <- exp(test$y_hat_LASSO) - 1 # unlog
+write_csv(sample_submission, path = "data/submission_model_2.csv")
+
 ```
 
 Comparing both RMLSE's here:
 
 Method           | RMLSE on training  | RMLSE on test (via Kaggle)
 ---------------- | ------------------ | -------------
-Unregularized lm | X                  | Y
-LASSO            | A                  | B
+Unregularized lm | 0.00362            | 0.219
+LASSO            | 0.00456            | 0.193
 
 
 
