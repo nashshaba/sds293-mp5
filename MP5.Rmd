@@ -209,8 +209,6 @@ WoodDeckSF + OpenPorchSF + EnclosedPorch + ThirdSsnPorch + ScreenPorch + PoolAre
 MiscVal + MoSold + YrSold" %>% 
   as.formula()
 
-
-
 # Fit unregularized multiple regression model and output regression table. The
 # unregularized beta-hat coefficients are in the estimate column. Recall from
 # Lec18 notes that this is one "extreme". REMEMBER THESE VALUES!!!
@@ -269,7 +267,7 @@ lowest estimated RMLSE as well as this lowest RMLSE as well. You may use functio
 ```{r}
 # Find lambda star:
 
-# 3. Based on the above model formula, create "model matrix" representation of
+# Based on the above model formula, create "model matrix" representation of
 # the predictor variables. 
 set.seed(76)
 
@@ -278,7 +276,7 @@ x_matrix <- training %>%
   select(-`(Intercept)`) %>%
   as.matrix()
 
-# 5. Crossvalidation:
+# Crossvalidation:
 lambda_inputs <- 10^seq(from = -5, to = 3, length = 100)
 
 LASSO_CV <- cv.glmnet(
@@ -290,7 +288,7 @@ LASSO_CV <- cv.glmnet(
   type.measure = "mse"
 )
 
-# What is te smallest estimated mse?
+# What is te smallest estimated rmlse?
 LASSO_CV_df <- LASSO_CV %>%
   broom::tidy() %>%
   rename(mse = estimate) %>%
@@ -298,22 +296,9 @@ LASSO_CV_df <- LASSO_CV %>%
   arrange(rmlse)
 
 
-# The lambda_star is in the top row. We can extract this lambda_star value from
-# the LASSO_CV object:
+# The lambda_star is in the top row. We can extract this lambda_star value by getting the lambda value in the first row
 lambda_star <- LASSO_CV_df$lambda[1]
 lambda_star
-
-
-
-
-
-
-
-
-# What are the beta_hat values resulting from lambda_star? Which are shrunk to 0?
-# get_LASSO_coefficients(LASSO_fit_all_lambda) %>%
-#   filter(lambda == lambda_star)
-
 ```
 
 ```{r}
@@ -420,6 +405,22 @@ LASSO            | 0.00456            | 0.193
 1. Output a `data/submit_LASSO_2.csv`
 1. Submit to Kaggle and replace the screenshot below with an screenshot of your score.
 1. Try to get the best Kaggle leaderboard score!
+
+```{r}
+# Train your model here:
+
+# Model formula
+model_formula <- "log_SalePrice ~ MSSubClass + LotFrontage + LotArea + 
+OverallQual + OverallCond + YearBuilt + YearRemodAdd + MasVnrArea + BsmtFinSF1 + 
+BsmtFinSF2 + BsmtUnfSF + TotalBsmtSF + FirstFlrSF + SecondFlrSF + LowQualFinSF + 
+GrLivArea + BsmtFullBath + BsmtHalfBath + FullBath + HalfBath + BedroomAbvGr + 
+KitchenAbvGr + TotRmsAbvGrd + Fireplaces + GarageYrBlt + GarageCars + GarageArea + 
+WoodDeckSF + OpenPorchSF + EnclosedPorch + ThirdSsnPorch + ScreenPorch + PoolArea + 
+MiscVal + MoSold + YrSold" %>% 
+  as.formula()
+
+
+```
 
 ![](score_screenshot.png){ width=100% }
 
