@@ -252,7 +252,7 @@ RMLSE on training  | RMLSE on test (via Kaggle)
 ------------------ | -------------
 0.003618116        | 0.21959
 
-The difference in RMSLE may be due the difference in training sample size (50 vs. 1460).
+The difference in RMSLE may be due the difference in training sample size (50 vs. 1460). Because the sample size is so small, the model may be overfit to the training data, which means it won't be robust fit outside data sets. 
 
 ***
 
@@ -301,6 +301,10 @@ LASSO_CV_df <- LASSO_CV %>%
 # The lambda_star is in the top row. We can extract this lambda_star value by getting the lambda value in the first row
 lambda_star <- LASSO_CV_df$lambda[1]
 lambda_star
+
+# Lowest RMLSE value:
+lowest_RMLSE <- LASSO_CV_df$rmlse[1]
+lowest_RMLSE
 ```
 
 ```{r}
@@ -366,7 +370,7 @@ LASSO_coefficients_plot +
 1. Compare the two RMLSE's. If they are different, comment on why they might be different.
 
 
-The LASSO model shrunk 12 variables to zero. The follow table displays the variables that were not retained:
+The LASSO model shrunk 12 variables to zero. The following table displays the variables that were not retained:
 
 ```{r}
 my_lasso_res = get_LASSO_coefficients(LASSO_fit_optimal)
@@ -405,7 +409,7 @@ Method           | RMLSE on training  | RMLSE on test (via Kaggle)
 Unregularized lm | 0.00362            | 0.219
 LASSO            | 0.00456            | 0.193
 
-Bottome line: LASSO is less specific to the training data, but is more robust for use in outside datasets. LASSO helps prevent overfitting.
+Bottom line: LASSO is less specific to the training data, but is more robust for use in outside datasets. LASSO helps prevent overfitting.
 
 Details: The LASSO model selected for the most important features necessary to make predictions, while the unregularized lm just used all of the predictors that we supplied. Unregularized lm likely performed better on the training set because we used all of the predictors; this results in a tight model fit on the training dataset. Because this unregularized lm model is so specific to the training data, it is not necessarily robust for outside datasets. The LASSO model dropped out some of the predictors, which resulted in a less tight fit to the training data. Importantly, the LASSO model selected the most important predictors, which allowed for a more robust model that performed better on the training. 
 
@@ -425,6 +429,8 @@ Details: The LASSO model selected for the most important features necessary to m
 # Add log transform GrLivArea
 training$log10_GrLivArea = log10(training$GrLivArea)
 test$log10_GrLivArea = log10(test$GrLivArea) # just to run function
+test$SalePrice = 1
+test$log_SalePrice = 1
 
 # Convert to factor
 test$HouseStyle = as.factor(test$HouseStyle)
@@ -485,8 +491,9 @@ test <- test %>%
 # Make sample submission
 sample_submission$SalePrice <- exp(test$y_hat_LASSO) - 1 # unlog
 write_csv(sample_submission, path = "data/submit_LASSO_2.csv")
-
 ```
+
+Screenshot of Kaggle score:
 
 ![](mp5_cannonball.png){ width=100% }
 
