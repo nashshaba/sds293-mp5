@@ -340,7 +340,7 @@ LASSO_coefficients_plot <- get_LASSO_coefficients(LASSO_fit_all_lambda) %>%
   # Plot:
   ggplot(aes(x = lambda, y = estimate, col = term)) +
   geom_line() +
-  labs(x = "lambda (log10-scale)", y = "beta-hat")+
+  labs(x = "lambda (log10-scale)", y = "beta-hat",col = "term")+
   scale_x_log10()
 
 # 6. Now mark lambda_star in beta-hat vs lambda plot:
@@ -356,7 +356,7 @@ LASSO_coefficients_plot +
 
 # Point of diminishing returns
 
-1. In qualitative language, comment on the resulting amoung of shrinkage in the LASSO model?
+1. In qualitative language, comment on the resulting amount of shrinkage in the LASSO model?
 1. Obtain the RMLSE of the fitted model
       a) on the `training` data
       b) on the `test` data via a submission to Kaggle `data/submit_LASSO.csv` that we will test.
