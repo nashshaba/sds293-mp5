@@ -422,7 +422,8 @@ Details: The LASSO model selected for the most important features necessary to m
 # Add log transform GrLivArea
 training$log10_GrLivArea = log10(training$GrLivArea)
 test$log10_GrLivArea = 1 # just to run function
-test$y_hat_LASSO = 1
+test$SalePrice = 1
+test$log_SalePrice = 1
 
 # Model formula using some categorical variables
 model_formula_2 <- "log_SalePrice ~ log10_GrLivArea + OverallQual + LotArea + HouseStyle + Neighborhood + SaleCondition + Condition1 + OverallCond + YearBuilt + CentralAir + Fireplaces + WoodDeckSF + MSSubClass + LotFrontage +  
@@ -464,10 +465,6 @@ lambda_star
 # What are the beta_hat values resulting from lambda_star? Which are shrunk to 0?
 # get_LASSO_coefficients(LASSO_fit_all_lambda) %>%
 #   filter(lambda == lambda_star)
-
-# To avoid error when applying model to test data
-# REF https://stackoverflow.com/questions/29015282/predict-function-error-for-probabilities-in-glmnet
-X = sparse.model.matrix(model_formula_2, data = combined)
 
 # Fit model to training
 LASSO_fit_optimal_2 <- glmnet(x = x_matrix, y = training$log_SalePrice, alpha = 1, lambda = lambda_star)
