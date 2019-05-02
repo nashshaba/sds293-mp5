@@ -419,9 +419,22 @@ The LASSO model selected for the most important features necessary to make predi
 # Train your model here:
 
 # Model formula using some categorical variables
-
 model_formula_2 <- "log10_SalePrice ~ log10_GrLivArea + OverallQual + LotArea + HouseStyle + Neighborhood + SaleCondition + Condition1 + OverallCond + YearBuilt + CentralAir + Fireplaces + WoodDeckSF" %>%
   as.formula()
+
+x_matrix_2 <- training %>%
+  modelr::model_matrix(model_formula_2, data = .) %>%
+  select(-`(Intercept)`) %>%
+  as.matrix()
+
+LASSO_CV_2 <- cv.glmnet(
+  x = x_matrix_2,
+  y = training$log_SalePrice,
+  alpha = 1,
+  lambda = lambda_inputs,
+  nfolds = 10,
+  type.measure = "mse"
+)
 
 
 ```
